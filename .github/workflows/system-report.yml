@@ -1,0 +1,56 @@
+name: System Resource Report
+on:
+  workflow_dispatch: {}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gather system info and produce report
+        run: |
+          set -euo pipefail
+          OUT=report/system-report.txt
+          mkdir -p report
+          {
+            echo "== TIMESTAMP: $(date -u +"%Y-%m-%dT%H:%M:%SZ") =="
+            echo
+            echo "== CPU =="
+            lscpu || true
+            echo
+            echo "== CPU CORES =="
+            nproc --all || true
+            echo
+            echo "== MEMORY =="
+            free -h || true
+            echo
+            echo "== DISK (root) =="
+            df -h / || true
+            echo
+            echo "== LOAD AVERAGE =="
+            cat /proc/loadavg || true
+            echo
+            echo "== NETWORK INTERFACES =="
+            ip -br addr || true
+            echo
+            echo "== PUBLIC IP =="
+            (curl -s https://ifconfig.me || curl -s https://api.ipify.org || curl -s https://ipinfo.io/ip) || echo "failed to get public ip"
+            echo
+            echo "== BANDWIDTH (speedtest-cli) =="
+            # Try apt first, fall back to available commands
+            if ! command -v speedtest-cli >/dev/null 2>&1 && ! command -v speedtest >/dev/null 2>&1; then
+              sudo apt-get update -y || true
+              sudo apt-get install -y speedtest-cli || sudo apt-get install -y speedtest || true
+            fi
+            if command -v speedtest-cli >/dev/null 2>&1; then
+              speedtest-cli --simple || echo "speedtest-cli failed"
+            elif command -v speedtest >/dev/null 2>&1; then
+              speedtest --accept-license --format=json || echo "speedtest failed"
+            else
+              echo "no speedtest installed"
+            fi
+          } | tee "$OUT"
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-report
+          path: report/system-report.txt
