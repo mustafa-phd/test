@@ -1,0 +1,17 @@
+{
+  "name": "astro-auth-template",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "start": "node ./dist/server/entry.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.2.4",
+    "@astrojs/node": "^11.1.4",
+    "@libsql/client": "^0.17.4"
+  }
+}

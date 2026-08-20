@@ -1,0 +1,13 @@
+---
+// Logout: delete the session, clear the cookie, redirect home.
+// The dashboard posts here via a plain HTML form (no client JS needed).
+import { deleteSession, SESSION_COOKIE } from '../lib/session.js';
+
+if (Astro.request.method === 'POST') {
+  const token = Astro.cookies.get(SESSION_COOKIE)?.value;
+  if (token) await deleteSession(token);
+  Astro.cookies.delete(SESSION_COOKIE, { path: '/' });
+}
+
+return Astro.redirect('/');
+---

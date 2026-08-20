@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# local database (LibSQL/SQLite)
+data.db
+data.db-*
+*.db
+*.db-*
+
+# environment
+.env
+.env.local
+.env.*.local
+
+# misc
+.DS_Store
+npm-debug.log*

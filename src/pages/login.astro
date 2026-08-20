@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Login">
+  <h1>Login</h1>
+
+  <form id="login-form" method="POST">
+    <p>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required autocomplete="email" />
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required autocomplete="current-password" />
+    </p>
+    <button type="submit">Log in</button>
+  </form>
+
+  <p id="form-error" role="alert"></p>
+  <p>No account yet? <a href="/register">Register</a>.</p>
+
+  <script>
+    import { actions, isInputError } from 'astro:actions';
+
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('form-error');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorEl.textContent = '';
+
+      const { data, error } = await actions.login(new FormData(form));
+
+      if (error) {
+        errorEl.textContent = isInputError(error)
+          ? 'Please provide a valid email address and a password.'
+          : error.message || 'Something went wrong. Please try again.';
+        return;
+      }
+
+      window.location.assign(data.redirectTo);
+    });
+  </script>
+</BaseLayout>

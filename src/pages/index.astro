@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const user = Astro.locals.user;
+---
+<BaseLayout title="Home">
+  <h1>Home</h1>
+  {user ? (
+    <p>
+      Signed in as <strong>{user.email}</strong>.
+      <a href="/dashboard">Go to your dashboard</a>
+    </p>
+  ) : (
+    <p>
+      <a href="/register">Create an account</a> or{' '}
+      <a href="/login">log in</a>.
+    </p>
+  )}
+</BaseLayout>
